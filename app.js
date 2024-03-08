@@ -8,7 +8,7 @@ const mongoConnect = require('./util/database').mongoConnect;
 const errorController = require('./controllers/error');
 
 // const Product = require('./models/product');
-// const User = require('./models/user');
+const User = require('./models/user');
 // const Cart = require('./models/cart');
 // const CartItem = require('./models/cart-item')
 
@@ -21,13 +21,12 @@ const adminRoutes = require('./routes/admin');
 const shopRoutes = require('./routes/shop');
 
 app.use((req, res, next)=> {
-    // User.findByPk(1)
-    // .then((user)=>{
-    //     req.user = user;
-    //     next();
-    // })
-    // .catch((err)=> console.log(err));
-    next();
+    User.findById('65eb5ebe97ee16c183df7821')
+    .then((user)=>{
+        req.user = user;
+        next();
+    })
+    .catch((err)=> console.log(err));
 });
 
 app.use(bodyParser.urlencoded({ extended: false }));
