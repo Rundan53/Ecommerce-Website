@@ -1,6 +1,5 @@
 const Product = require('../models/product');
-const Cart = require('../models/cart');
-
+const User = require('../models/user')
 exports.getProducts = (req, res, next) => {
   Product.getProducts()
   .then((products) => {
@@ -47,9 +46,6 @@ exports.getIndex = (req, res, next) => {
 
 exports.getCart = (req, res, next) => {
   req.user.getCart()
-  .then((cart)=> {
-    return cart.getProducts()
-  })
   .then((products)=> {
     res.render('shop/cart', {
       path: '/cart',
@@ -66,48 +62,27 @@ exports.getCart = (req, res, next) => {
 
 exports.postCart = (req, res, next) => {
   const prodId = req.body.productId;
-  let fetchedCart;
-  let newQuantity = 1;
-
-  req.user.getCart()
-  .then((cart)=> {
-    fetchedCart = cart;
-    return cart.getProducts({where: {id: prodId}})
+console.log('inside postcart')
+  Product.findProduct(prodId)
+  .then((product)=>{
+    console.log(`product = ${product}`)
+    return req.user.addToCart(product)
   })
-  .then((products)=> {
-    let product;
-    if(products.length>0) {
-      product = products[0]
-    }
-
-    if(product) {
-      const oldQuantity = product.cartItems.quantity;
-      newQuantity = oldQuantity + 1;
-      return product;
-    }
-    return Product.findByPk(prodId)
+  .then((result)=>{
+    console.log(result);
+    res.redirect('/cart');
   })
-  .then((product)=> {
-    return fetchedCart.addProduct(product, {through: {quantity: newQuantity}})
-  })
-  .then(()=> res.redirect('/cart'))
-  .catch(err=> console.log(err));
-
+  .catch(err=>console.log(err))
 }
 
 
 exports.postCartDeleteProduct = (req,res,next)=> {
   const prodID = req.body.productId;
-  req.user.getCart()
-  .then((cart)=> {
-    return cart.getProducts({where: {id: prodID}})
+  req.user.deleteProductFromCart(prodID)
+  .then((result)=> {
+    console.log(result)
+    res.redirect('/cart')
   })
-  .then((products)=> {
-    const product = products[0];
-    return product.cartItems.destroy();
-  })
-  .then(()=> res.redirect('/cart'))
-
   .catch(err=> console.log(err));
   
 }
