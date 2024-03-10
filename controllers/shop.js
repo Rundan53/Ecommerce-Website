@@ -41,6 +41,11 @@ exports.getIndex = (req, res, next) => {
   })
 };
 
+exports.createOrder = (req, res)=>{
+  req.user.addOrder()
+  .then(()=> res.redirect('/order'))
+  .catch(err=> console.log(err))
+}
 
 
 
@@ -90,10 +95,16 @@ exports.postCartDeleteProduct = (req,res,next)=> {
 
 
 exports.getOrders = (req, res, next) => {
-  res.render('shop/orders', {
-    path: '/orders',
-    pageTitle: 'Your Orders'
-  });
+  req.user.getOrder()
+  .then((orders)=>{
+    console.log(orders)
+    res.render('shop/orders', {
+      path: '/orders',
+      pageTitle: 'Your Orders',
+      orders: orders
+    });
+  })
+ 
 };
 
 exports.getCheckout = (req, res, next) => {
