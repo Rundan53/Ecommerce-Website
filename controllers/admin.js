@@ -1,3 +1,4 @@
+const product = require('../models/product');
 const Product = require('../models/product');
 
 exports.getAddProduct = (req, res, next) => {
@@ -10,7 +11,12 @@ exports.getAddProduct = (req, res, next) => {
 
 exports.postAddProduct = (req, res) => {
   const {title, imageUrl, price, description} = req.body;
-  const product = new Product(title, price, imageUrl, description,null)
+  const product = new Product({
+    title: title,
+    price: price,
+    imageUrl: imageUrl,
+    description: description
+  })
     product.save()
     .then(() => {
       console.log('product created');
@@ -28,7 +34,7 @@ exports.getEditProduct = (req, res, next) => {
     return;
   }
 
-  Product.findProduct( prodId )
+  Product.findById( prodId )
     // Product.findByPk(prodId)
     .then((product) => {
       if (!product) {
@@ -48,8 +54,8 @@ exports.getEditProduct = (req, res, next) => {
 
 
 exports.postDeleteProduct = (req, res, next) => {
-  const proId = req.body.productId;
-  Product.deleteProduct(proId)
+  const productId = req.body.productId;
+  Product.deleteOne({_id: productId})
     .then(() => {
       console.log('PRODUCT DESTROYED');
       res.redirect('/admin/products');
@@ -65,8 +71,12 @@ exports.postEditProduct = (req, res, next) => {
   const updatedImageUrl = req.body.imageUrl;
   const updatedDescription = req.body.description;
 
-  const product = new Product(updatedTitle, updatedPrice, updatedImageUrl, updatedDescription, prodId)
-  product.save()
+  Product.updateOne({_id: prodId}, {$set: {
+    title: updatedTitle,
+    price: updatedPrice,
+    imageUrl: updatedImageUrl,
+    description: updatedDescription
+  }})
     .then(() => res.redirect('/admin/products'))
     .catch((err) => console.log(err))
 }
@@ -74,7 +84,7 @@ exports.postEditProduct = (req, res, next) => {
 exports.getProducts = (req, res, next) => {
   // req.user
   //   .getProducts()
-  Product.getProducts()
+  Product.find()
     .then((products) => {
       res.render('admin/products', {
         prods: products,

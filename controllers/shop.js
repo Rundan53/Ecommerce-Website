@@ -1,7 +1,7 @@
 const Product = require('../models/product');
 const User = require('../models/user')
 exports.getProducts = (req, res, next) => {
-  Product.getProducts()
+  Product.find()
   .then((products) => {
     res.render('shop/product-list', {
       prods: products,
@@ -12,11 +12,11 @@ exports.getProducts = (req, res, next) => {
   .catch((err)=> console.log(err));
 }
 
-exports.getProduct = (req, res, next) => {
+exports.getProduct = (req, res) => {
   const prodID = req.params.productId
 
   // req.user.getProducts({where: {id: prodID}})
-  Product.findProduct(prodID)
+  Product.findById(prodID)
   .then((product) => {
     res.render('shop/product-detail', {
       product: product,
@@ -31,7 +31,7 @@ exports.getProduct = (req, res, next) => {
 exports.getIndex = (req, res, next) => {
   // req.user.
   // getProducts()
-  Product.getProducts()
+  Product.find()
   .then((products)=> {
     res.render('shop/index', {
       prods: products,
