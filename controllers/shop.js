@@ -50,8 +50,10 @@ exports.createOrder = (req, res)=>{
 
 
 exports.getCart = (req, res, next) => {
-  req.user.getCart()
-  .then((products)=> {
+  req.user.populate('cart.items.productId')
+  .then((user)=> {
+    console.log('prodcuts',user.cart.items);
+    const products = user.cart.items
     res.render('shop/cart', {
       path: '/cart',
       pageTitle: 'Your Cart',
@@ -67,10 +69,9 @@ exports.getCart = (req, res, next) => {
 
 exports.postCart = (req, res, next) => {
   const prodId = req.body.productId;
-console.log('inside postcart')
-  Product.findProduct(prodId)
+
+  Product.findById(prodId)
   .then((product)=>{
-    console.log(`product = ${product}`)
     return req.user.addToCart(product)
   })
   .then((result)=>{
