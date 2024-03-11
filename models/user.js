@@ -50,6 +50,16 @@ userSchema.methods.getOrder = function (){
 }
 
 
+userSchema.methods.deleteProductFromCart = function (productId){
+    const updatedCart = this.cart.items.filter(p=>{
+        return  p.productId.toString() !== productId.toString();
+    });
+
+    this.cart.items = updatedCart;
+    return this.save()
+}
+
+
 // class User{
 //     constructor(name, email, cart, id){
 //         this.name = name;
@@ -118,14 +128,7 @@ userSchema.methods.getOrder = function (){
 //     }
 
 
-//     deleteProductFromCart(productId){
-//         const updatedCart = this.cart.items.filter(p=>{
-//             return  p.productId.toString() !== productId.toString();
-//         });
-//         const db = getDb();
-//         console.log(updatedCart)
-//         return db.collection('users').updateOne({_id: new ObjectId(this._id)}, {$set: {cart: {items: updatedCart}}})
-//     }
+   
 
 //     addOrder(){
 //         const db = getDb();

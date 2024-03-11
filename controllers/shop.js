@@ -52,7 +52,6 @@ exports.createOrder = (req, res)=>{
 exports.getCart = (req, res, next) => {
   req.user.populate('cart.items.productId')
   .then((user)=> {
-    console.log('prodcuts',user.cart.items);
     const products = user.cart.items
     res.render('shop/cart', {
       path: '/cart',
@@ -86,7 +85,6 @@ exports.postCartDeleteProduct = (req,res,next)=> {
   const prodID = req.body.productId;
   req.user.deleteProductFromCart(prodID)
   .then((result)=> {
-    console.log(result)
     res.redirect('/cart')
   })
   .catch(err=> console.log(err));
