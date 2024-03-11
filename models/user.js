@@ -23,7 +23,7 @@ const userSchema = new Schema({
 })
 
 userSchema.methods.addToCart = function (product) {
-
+    console.log(product._id)
     const productIndex = this.cart.items.findIndex((cp) => {
         return cp.productId.toString() == product._id.toString();
     })
@@ -44,10 +44,14 @@ userSchema.methods.addToCart = function (product) {
     return this.save()
 }
 
-
-userSchema.methods.getOrder = function (){
-    return Order.find({'user.id': new ObjectId(this._id)})
+userSchema.methods.clearCart = function(){
+    this.cart.items = [];
+    return this.save();
 }
+
+// userSchema.methods.getOrder = function (){
+//     return Order.find({'user.id': new ObjectId(this._id)})
+// }
 
 
 userSchema.methods.deleteProductFromCart = function (productId){
